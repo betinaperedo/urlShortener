@@ -4,6 +4,10 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
+/*
+*Betina
+*/
+
 public class PersistentMap {
 	private static PersistentMap dataBase;
 	public final Map<String, String> urlMap = Maps.newHashMap(); 
