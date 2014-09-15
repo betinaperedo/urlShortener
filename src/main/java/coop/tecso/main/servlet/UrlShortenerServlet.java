@@ -39,13 +39,10 @@ public class UrlShortenerServlet extends HttpServlet {
 		checkArgument(!Strings.isNullOrEmpty(urlinput), INTERNAL_ERROR);
 
 		String urlOuput = getShortUrl(urlinput);
-		persistsUrlMapping(urlinput, urlOuput);
+		
 		if (req.getPathInfo().equals(CREATE_URL)) {
-			
-			
-			String htmlRespone = buildAnswer(urlOuput);
-			
-			resp.getWriter().append(htmlRespone);
+			persistsUrlMapping(urlinput, urlOuput);
+			resp.getWriter().append("/urlshortener/" + urlOuput);
 		}
 	}
 
@@ -68,9 +65,17 @@ public class UrlShortenerServlet extends HttpServlet {
 	}
 	private String buildAnswer(String urlOuput) {
 		StringBuilder sb = new StringBuilder("<html>");
-		sb.append("<h2>Your short url is : ");
+//		sb.append("<body>");
+//		sb.append("<form action='/urlshortener/redirect' method='post' name='redirectionForm'>");
+//		sb.append("<h2>Your short url is : ");
+		sb.append("<a href='");
 		sb.append("http://localhost:8080/urlshortener/");
 		sb.append(urlOuput);
+		sb.append("'>http://bety/");	
+		sb.append(urlOuput);
+		sb.append("</a>");	
+//		sb.append("</form> ");
+//		sb.append("</body>");
 		sb.append("</html>");
 		return sb.toString();
 		
