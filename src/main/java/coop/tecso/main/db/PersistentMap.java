@@ -29,5 +29,8 @@ public class PersistentMap {
 	public String select(String key){
 		return urlMap.get(key);
 	}
+	public void delete(String key){
+		 urlMap.remove(key);
+	}
 
 }
