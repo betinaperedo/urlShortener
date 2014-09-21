@@ -3,50 +3,74 @@
 <head>
 
 <script type="text/javascript">
-
   function init() {
+	  
 	var url = document.getElementById("urlInput");
 	var button = document.getElementById("createUrlButton");
-	var linkList = document.getElementById("linksList");
+	var linkList=document.getElementById("linksList");
+	
+	var oReqList = new XMLHttpRequest();
+	oReqList.onload  = function(){		 
+		 var urlArr = JSON.parse(oReqList.responseText);		
+		 createUrlList(urlArr);
+	}
+	oReqList.open("get", "/urlshortener/list", true);
+	oReqList.send();
+	
+	function createUrlList(arr) {	    	    
+	    for(var i = 0; i < arr.length; i++) {	
+	    	var shorturl =arr[i].shortUrl;
+	    	createComponet(shorturl) ;	    	
+    	}
+	    
+	}
+	
+	function createComponet(shorturl) {		
+		shorturlocation =document.location.pathname+"/"+shorturl;
+		var di =document.createElement("div");
+		di.className="divClass"      		
+		var img =document.createElement("img");
+		img.src="/urlshortener/img/delete.png"
+		img.id="image";
+		img.className="imgClass"; 
+		var newLine = document.createElement("a");
+		newLine.href=shorturlocation;
+		newLine.innerText=shorturlocation;
+		newLine.target="_blank";
+		newLine.className="inputClass"; 
+		
+		di.appendChild(img);
+		di.appendChild(newLine);
+		linkList.appendChild(di);
+		url.value="";
+		img.onclick  = function()  { eliminar(di,shorturl) }; 
+	}
+	
+	
+	
+	function eliminar(di,str){
+		var oReqEl = new XMLHttpRequest();
+    	oReqEl.onload = function(){
+    		linkList.removeChild(di);
+    	}
+    	
+    	oReqEl.open("post", "/urlshortener/remove?urlinput="+str, true);
+    	oReqEl.send();
+	}
+	
+	
     button.onclick = function() { 
     	
     	var oReq = new XMLHttpRequest();
     	oReq.onload = function(){
-    		var di =document.createElement("div");
-    		var but = document.createElement("button");
-    		but.value="Eliminar";
-    		
-    		linkList.appendChild(but);
-    		var newLine = document.createElement("a");
-    		newLine.href=this.responseText;
-    		newLine.innerText=this.responseText;
-    		newLine.target="_blank";
-    		linkList.appendChild(but);
-    		linkList.appendChild(newLine);
-    		linkList.appendChild(di);
-    		url.value="";
-    		but.onClick  = function()  { eliminar(di,this.responseText) }; 
-    			
-    		
-    		
+    		createComponet(this.responseText) ;	      		    		
     	}
     	
-    	function eliminar(di,str){
-    		var oReq = new XMLHttpRequest();
-        	oReq.onload = function(){
-        		linkList.removeChild(di);
-        	}
-        	oReq.open("post", "/urlshortener/delete?urlinput="+str, true);
-    	}
     	
-    	oReq.open("post", "/urlshortener/create?urlinput="+url.value, true);
+    	
+    	oReq.open("post", "/urlshortener/create?urlinput="+encodeURIComponent(url.value), true);
     	oReq.send();
-    	
-      // Crear un request AJAX, incluir el parametro url.value
-      // En la function que toma el response, crear un <a> y setearle
-      // el href.
-      // Despues agregar el <a> como hijo del body.
-    	
+    
       console.log(url.value);
 	};  
   }
@@ -54,16 +78,12 @@
 <style type="text/css">
 
 .myList{
-
 width: 400px; 
-background-color: red;
 }
 
-.myList a{
-display: block;
-}
 
-.mybutton{
+
+.mybutton {
 cursor: default!important;
 display: inline-block;
 font-weight: bold;
@@ -87,24 +107,22 @@ color: #444!important;
 font-size: 11px;
 }
 
-.mybuttonDelete {
-cursor: default!important;
-display: inline-block;
-font-weight: bold;
-text-align: center;
-text-decoration: none!important;
--webkit-border-radius: 2px;
-border-radius: 2px;
--webkit-user-select: none;
-letter-spacing: normal;
-word-spacing: normal;
-text-transform: none;
-text-indent: 0px;
-text-shadow: none;
-border: 1px solid gainsboro;
-border-color: rgba(0, 0, 0, 0.1);
-color: #444!important;
-font-size: 11px;
+.divClass {
+position: relative;
+top: 20px;
+left: 65px;
+}
+
+.imgClass {
+position: relative;
+top: 6px;
+cursor: pointer;
+}
+
+
+.inputClass{
+position: relative;
+left: 30px;
 }
 
 
