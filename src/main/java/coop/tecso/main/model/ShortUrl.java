@@ -1,8 +1,11 @@
 package coop.tecso.main.model;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+
+import org.mockito.internal.invocation.SerializableMethod;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Throwables;
@@ -11,14 +14,15 @@ import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
 
-public class UrlShortener {
+public class ShortUrl implements Serializable{
 	private String shortUrl;
 	private String longtUrl;
 	
-	public UrlShortener(){
+	public ShortUrl(){
+		
 		
 	}
-	public UrlShortener(String shortUrl, String longtUrl) {
+	public ShortUrl(String shortUrl, String longtUrl) {
 		this.shortUrl=shortUrl;
 		this.longtUrl=longtUrl;
 	}

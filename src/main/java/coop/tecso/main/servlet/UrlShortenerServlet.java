@@ -32,8 +32,10 @@ import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import coop.tecso.main.db.PersistentMap;
-import coop.tecso.main.model.UrlShortener;
+import coop.tecso.main.db.MapShortUrlDaoImpl;
+import coop.tecso.main.db.MongoShortUrlDaoImpl;
+import coop.tecso.main.db.ShortUrlDAO;
+import coop.tecso.main.model.ShortUrl;
 
 @WebServlet(urlPatterns = { "/*" })
 public class UrlShortenerServlet extends HttpServlet {
@@ -49,7 +51,7 @@ public class UrlShortenerServlet extends HttpServlet {
 	
 
 	public final Map<String, String> urlMap = Maps.newHashMap();
-	public PersistentMap dataBase = PersistentMap.getInstance();
+	public ShortUrlDAO dataBase = MongoShortUrlDaoImpl.getInstance();
 	public int count;
 
 	@Override
@@ -59,7 +61,7 @@ public class UrlShortenerServlet extends HttpServlet {
 		checkArgument(!Strings.isNullOrEmpty(urlinput), INTERNAL_ERROR);
 		
 		if (req.getPathInfo().equals(CREATE_URL)) {						
-			String urlOuput = UrlShortener.getShortUrl(urlinput);
+			String urlOuput = ShortUrl.getShortUrl(urlinput);
 			persistsUrlMapping(urlinput, urlOuput);
 			resp.getWriter().append(urlOuput);
 		}else if (req.getPathInfo().equals(REMOVE_URL)) {			
@@ -93,22 +95,21 @@ public class UrlShortenerServlet extends HttpServlet {
 		}
 		else {
 			checkState(req.getPathInfo().startsWith(INDEX_PATH));
-			
-			String redirectUrl = dataBase.selectLongUrl(req.getPathInfo().substring(1));			
-			if (!redirectUrl.startsWith("http")) {
-				redirectUrl = "http://" + redirectUrl;
+			ShortUrl shortUrl =dataBase.get(req.getPathInfo().substring(1));
+			if(shortUrl!=null){
+				String redirectUrl = shortUrl.getLongtUrl();			
+				if (!redirectUrl.startsWith("http")) {
+					redirectUrl = "http://" + redirectUrl;
+				}
+				resp.sendRedirect(redirectUrl);
 			}
-			resp.sendRedirect(redirectUrl);
+			
 		}
 	}
 
-	
-	
-	
-	
-
-	private void persistsUrlMapping(String longUrl, String shortUrl) {
-		dataBase.insert(shortUrl, longUrl);
+	private void persistsUrlMapping(String longUrl, String shortU) {
+		ShortUrl shortUrl = new ShortUrl(shortU,longUrl);
+		dataBase.save(shortUrl);
 	}
 	private void deleteUrlMapping(String shortUrl) {
 		dataBase.delete(shortUrl);
