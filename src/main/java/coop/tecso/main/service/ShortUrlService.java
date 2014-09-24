@@ -1,13 +1,14 @@
-package coop.tecso.main.db;
+package coop.tecso.main.service;
 
 import java.util.List;
 
 import coop.tecso.main.model.ShortUrl;
 
-public interface ShortUrlDAO {
+public interface ShortUrlService {
 	public void save(ShortUrl shortUrl);
 	public ShortUrl get(String shortUrlString);
 	public void delete(String id);
-	public List<ShortUrl> findAll();	
+	public List<ShortUrl> findAll();
+	public String createAndSave(String urlinput);	
 
 }

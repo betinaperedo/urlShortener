@@ -1,4 +1,4 @@
-package coop.tecso.main.db;
+package coop.tecso.main.dao;
 
 import java.net.UnknownHostException;
 import java.util.List;

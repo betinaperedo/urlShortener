@@ -39,7 +39,7 @@ public class ShortUrl implements Serializable{
 		this.longtUrl = longtUrl;
 	}
 	
-	public static String getShortUrl(String url) {				
+	public static String getShortUrlSha1Implementation(String url) {				
 		return toSHA1(url);
 	}
 	private static String toSHA1(String s) {

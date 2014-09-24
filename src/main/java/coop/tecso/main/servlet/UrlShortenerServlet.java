@@ -32,10 +32,12 @@ import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import coop.tecso.main.db.MapShortUrlDaoImpl;
-import coop.tecso.main.db.MongoShortUrlDaoImpl;
-import coop.tecso.main.db.ShortUrlDAO;
+import coop.tecso.main.dao.MapShortUrlDaoImpl;
+import coop.tecso.main.dao.MongoShortUrlDaoImpl;
+import coop.tecso.main.dao.ShortUrlDAO;
 import coop.tecso.main.model.ShortUrl;
+import coop.tecso.main.service.ShortUrlService;
+import coop.tecso.main.service.ShortUrlServiceImpl;
 
 @WebServlet(urlPatterns = { "/*" })
 public class UrlShortenerServlet extends HttpServlet {
@@ -50,8 +52,8 @@ public class UrlShortenerServlet extends HttpServlet {
 	public static final String URL_PARAMETER = "urlinput";
 	
 
-	public final Map<String, String> urlMap = Maps.newHashMap();
-	public ShortUrlDAO dataBase = MongoShortUrlDaoImpl.getInstance();
+	
+	public ShortUrlService shortUrlService = new ShortUrlServiceImpl();
 	public int count;
 
 	@Override
@@ -60,12 +62,11 @@ public class UrlShortenerServlet extends HttpServlet {
 		String urlinput = URLDecoder.decode(req.getParameter(URL_PARAMETER), Charsets.UTF_8.name());
 		checkArgument(!Strings.isNullOrEmpty(urlinput), INTERNAL_ERROR);
 		
-		if (req.getPathInfo().equals(CREATE_URL)) {						
-			String urlOuput = ShortUrl.getShortUrl(urlinput);
-			persistsUrlMapping(urlinput, urlOuput);
-			resp.getWriter().append(urlOuput);
+		if (req.getPathInfo().equals(CREATE_URL)) {	
+			String shortUrlStr=shortUrlService.createAndSave(urlinput);			
+			resp.getWriter().append(shortUrlStr);
 		}else if (req.getPathInfo().equals(REMOVE_URL)) {			
-			deleteUrlMapping(urlinput);
+			shortUrlService.delete(urlinput);
 			
 		}
 	}
@@ -85,17 +86,15 @@ public class UrlShortenerServlet extends HttpServlet {
 		}
 		else if (req.getPathInfo().startsWith(LIST_URL)) {
 			Gson gson = new GsonBuilder().create();
-			String urlListJson =gson.toJson(dataBase.findAll());
+			String urlListJson =gson.toJson(shortUrlService.findAll());
 			resp.setContentType("application/json");
-			resp.setCharacterEncoding(Charsets.UTF_8.name());
-			System.out.print("logging urlList");
-			System.out.print(urlListJson);
+			resp.setCharacterEncoding(Charsets.UTF_8.name());			
 			resp.getWriter().write(urlListJson);
 			
 		}
 		else {
 			checkState(req.getPathInfo().startsWith(INDEX_PATH));
-			ShortUrl shortUrl =dataBase.get(req.getPathInfo().substring(1));
+			ShortUrl shortUrl =shortUrlService.get(req.getPathInfo().substring(1));
 			if(shortUrl!=null){
 				String redirectUrl = shortUrl.getLongtUrl();			
 				if (!redirectUrl.startsWith("http")) {
@@ -106,13 +105,7 @@ public class UrlShortenerServlet extends HttpServlet {
 			
 		}
 	}
-
-	private void persistsUrlMapping(String longUrl, String shortU) {
-		ShortUrl shortUrl = new ShortUrl(shortU,longUrl);
-		dataBase.save(shortUrl);
-	}
-	private void deleteUrlMapping(String shortUrl) {
-		dataBase.delete(shortUrl);
-	}
+	
+	
 
 }
