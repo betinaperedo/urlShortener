@@ -3,10 +3,7 @@ package coop.tecso.main.dao;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -17,25 +14,16 @@ import com.mongodb.MongoClient;
 import coop.tecso.main.model.ShortUrl;
 
 public class MongoShortUrlDaoImpl implements ShortUrlDAO{
-	private static MongoShortUrlDaoImpl dataBase;
+
 	private static MongoClient mongoClient;
 	private static DB dbMongo;
 	DBCollection tab_shorturl;
-	public MongoShortUrlDaoImpl()  throws UnknownHostException {
-		mongoClient = new MongoClient( "localhost" , 27017 );
-		dbMongo = mongoClient.getDB("urlshortenerdb");
-		tab_shorturl = dbMongo.getCollection("tab_shorturl");
-	}
-	
-	public static MongoShortUrlDaoImpl getInstance() {		
-		if(dataBase==null){
-			try {
-				dataBase= new MongoShortUrlDaoImpl();
-			} catch (UnknownHostException e) {				
-				e.printStackTrace();
-			}
-		}		
-		return dataBase;
+
+	public MongoShortUrlDaoImpl(MongoClient mongoClient, String dataBaseName, String collectionName) {
+		
+		this.mongoClient = mongoClient;
+		dbMongo = this.mongoClient.getDB(dataBaseName);
+		tab_shorturl = dbMongo.getCollection(collectionName);
 	}
 
 	@Override
@@ -43,8 +31,7 @@ public class MongoShortUrlDaoImpl implements ShortUrlDAO{
 		BasicDBObject document = new BasicDBObject();		
 		document.put("shortUrl", shortUrl.getShortUrl());
 		document.put("longUrl", shortUrl.getLongtUrl());		
-		tab_shorturl.insert(document);
-		
+		tab_shorturl.insert(document);		
 	}
 
 	@Override
@@ -58,7 +45,6 @@ public class MongoShortUrlDaoImpl implements ShortUrlDAO{
 			String longUrlStr=(String) dbObject.get("longUrl");
 			ShortUrl shortUrl = new ShortUrl(shortUrlStr, longUrlStr);
 			return shortUrl;
-			
 		}
 		return null;
 	}

@@ -1,22 +1,26 @@
 package coop.tecso.main.service;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.List;
 
-import javax.annotation.Resource;
+import com.google.inject.Inject;
 
-import coop.tecso.main.dao.MapShortUrlDaoImpl;
 import coop.tecso.main.dao.ShortUrlDAO;
 import coop.tecso.main.model.ShortUrl;
 
 public class ShortUrlServiceImpl implements ShortUrlService{
 
+	private final ShortUrlDAO shortUrlDAO;
 	
-	ShortUrlDAO shortUrlDAO=  MapShortUrlDaoImpl.getInstance();
-	
+	@Inject
+	public ShortUrlServiceImpl(ShortUrlDAO shortUrlDAO) {
+		this.shortUrlDAO = checkNotNull(shortUrlDAO);
+	}
+
 	@Override
 	public void save(ShortUrl shortUrl) {
 		shortUrlDAO.save(shortUrl);
-		
 	}
 
 	@Override
@@ -27,7 +31,6 @@ public class ShortUrlServiceImpl implements ShortUrlService{
 	@Override
 	public void delete(String id) {
 		shortUrlDAO.delete(id);
-		
 	}
 
 	@Override
@@ -41,7 +44,6 @@ public class ShortUrlServiceImpl implements ShortUrlService{
 		ShortUrl shortUrl = new ShortUrl(shortUrlStr,longUrlinput);
 		this.save(shortUrl);
 		return shortUrlStr;
-		
 	}
 
 }

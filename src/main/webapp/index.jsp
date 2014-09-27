@@ -26,7 +26,7 @@
 	}
 	
 	function createComponet(shorturl) {		
-		shorturlocation =document.location.pathname+"/"+shorturl;
+		shorturlocation =document.location.pathname+shorturl;
 		var di =document.createElement("div");
 		di.className="divClass"      		
 		var img =document.createElement("img");

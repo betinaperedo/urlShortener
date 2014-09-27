@@ -54,5 +54,16 @@ public class ShortUrl implements Serializable{
 			throw Throwables.propagate(e);
 		}
 	}
+	@Override
+	public boolean equals(Object obj) {
+		if(obj!=null && obj instanceof ShortUrl){			
+			ShortUrl shortUrlComper = (ShortUrl) obj;
+			return shortUrl.equals(shortUrlComper.getShortUrl()) && longtUrl.equals(shortUrlComper.getLongtUrl());
+		}
+		else
+			return false;
+		
+		
+	}
 
 }
