@@ -22,7 +22,7 @@ public class UrlShortenerModule extends AbstractModule {
 		bind(UrlShortenerServlet.class).in(Singleton.class);
 		bind(ShortUrlService.class).to(ShortUrlServiceImpl.class).in(Singleton.class);
 		
-//		bindConstant().annotatedWith(Names.named("hostname")).to("localhost");
+		bindConstant().annotatedWith(Names.named("hostname")).to("localhost");
 //		bind(String.class).annotatedWith(Names.named("hostname")).toInstance("localhost");
 		
 		

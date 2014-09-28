@@ -46,30 +46,30 @@ public class UrlShortenerServlet extends HttpServlet {
 			throws ServletException, IOException {
 		String urlinput = URLDecoder.decode(req.getParameter(URL_PARAMETER), Charsets.UTF_8.name());
 		checkArgument(!Strings.isNullOrEmpty(urlinput), INTERNAL_ERROR);
-		
-		if (req.getServletPath().equals(CREATE_URL)) {	
+		String servletPath = req.getServletPath();
+		if (servletPath.equals(CREATE_URL)) {	
 			String shortUrlStr=shortUrlService.createAndSave(urlinput);			
 			resp.getWriter().append(shortUrlStr);
-		}else if (req.getServletPath().equals(REMOVE_URL)) {			
-			shortUrlService.delete(urlinput);
-			
+		}else if (servletPath.equals(REMOVE_URL)) {			
+			shortUrlService.delete(urlinput);			
 		}
 	}
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		if (req.getServletPath().equals(INDEX_PATH)) {
+		String servletPath =req.getServletPath();
+		if (servletPath.equals(INDEX_PATH)) {
 			//cargo el index
 			ByteStreams.copy(
 					req.getServletContext().getResourceAsStream(INDEX_PAGE),
 					resp.getOutputStream());
-		} else if (req.getServletPath().startsWith("/img")) {
+		} else if (servletPath.startsWith("/img")) {
 			ByteStreams.copy(
 					req.getServletContext().getResourceAsStream(req.getServletPath()),
 					resp.getOutputStream());
 		}
-		else if (req.getServletPath().startsWith(LIST_URL)) {
+		else if (servletPath.startsWith(LIST_URL)) {
 			Gson gson = new GsonBuilder().create();
 			String urlListJson =gson.toJson(shortUrlService.findAll());
 			resp.setContentType("application/json");
