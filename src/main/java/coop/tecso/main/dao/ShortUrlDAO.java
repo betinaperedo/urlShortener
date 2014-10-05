@@ -2,7 +2,7 @@ package coop.tecso.main.dao;
 
 import java.util.List;
 
-import coop.tecso.main.model.ShortUrl;
+import coop.tecso.main.model.shortUrl.ShortUrl;
 
 public interface ShortUrlDAO {
 	public void save(ShortUrl shortUrl);

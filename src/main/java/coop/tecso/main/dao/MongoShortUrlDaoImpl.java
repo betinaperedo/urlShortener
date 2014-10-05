@@ -11,7 +11,7 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 
-import coop.tecso.main.model.ShortUrl;
+import coop.tecso.main.model.shortUrl.ShortUrl;
 
 public class MongoShortUrlDaoImpl implements ShortUrlDAO{
 
@@ -30,7 +30,7 @@ public class MongoShortUrlDaoImpl implements ShortUrlDAO{
 	public void save(ShortUrl shortUrl) {
 		BasicDBObject document = new BasicDBObject();		
 		document.put("shortUrl", shortUrl.getShortUrl());
-		document.put("longUrl", shortUrl.getLongtUrl());		
+		document.put("longUrl", shortUrl.getLongUrl());		
 		tab_shorturl.insert(document);		
 	}
 
@@ -50,9 +50,9 @@ public class MongoShortUrlDaoImpl implements ShortUrlDAO{
 	}
 
 	@Override
-	public void delete(String id) {
+	public void delete(String shortUrl ) {
 		BasicDBObject searchQuery = new BasicDBObject();
-		searchQuery.put("shortUrl", id);
+		searchQuery.put("shortUrl", shortUrl);
 		tab_shorturl.remove(searchQuery);
 	}
 

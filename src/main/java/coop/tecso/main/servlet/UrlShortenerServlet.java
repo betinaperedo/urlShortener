@@ -19,7 +19,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.inject.Inject;
 
-import coop.tecso.main.model.ShortUrl;
+import coop.tecso.main.model.shortUrl.ShortUrl;
 import coop.tecso.main.service.ShortUrlService;
 
 //@WebServlet(urlPatterns = { "/*" })
@@ -79,7 +79,7 @@ public class UrlShortenerServlet extends HttpServlet {
 		} else {
 			ShortUrl shortUrl =shortUrlService.get(req.getServletPath().substring(1));
 			if(shortUrl!=null){
-				String redirectUrl = shortUrl.getLongtUrl();			
+				String redirectUrl = shortUrl.getLongUrl();			
 				if (!redirectUrl.startsWith("http")) {
 					redirectUrl = "http://" + redirectUrl;
 				}

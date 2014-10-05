@@ -2,7 +2,7 @@ package coop.tecso.main.service;
 
 import java.util.List;
 
-import coop.tecso.main.model.ShortUrl;
+import coop.tecso.main.model.shortUrl.ShortUrl;
 
 public interface ShortUrlService {
 	public void save(ShortUrl shortUrl);

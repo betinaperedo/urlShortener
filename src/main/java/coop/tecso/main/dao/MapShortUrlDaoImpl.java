@@ -6,7 +6,7 @@ import java.util.Map;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
-import coop.tecso.main.model.ShortUrl;
+import coop.tecso.main.model.shortUrl.ShortUrl;
 
 /*
 *Betina

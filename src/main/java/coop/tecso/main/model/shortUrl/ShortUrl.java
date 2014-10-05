@@ -1,11 +1,9 @@
-package coop.tecso.main.model;
+package coop.tecso.main.model.shortUrl;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
-
-import org.mockito.internal.invocation.SerializableMethod;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Throwables;
@@ -15,16 +13,20 @@ import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
 
 public class ShortUrl implements Serializable{
+	
+	public static ShortUrl ofUrl(String longUrl) {
+		return new ShortUrl(getShortUrlSha1Implementation(longUrl), longUrl);
+	}
+	
 	private String shortUrl;
-	private String longtUrl;
+	private String longUrl;
 	
 	public ShortUrl(){
-		
-		
 	}
+
 	public ShortUrl(String shortUrl, String longtUrl) {
 		this.shortUrl=shortUrl;
-		this.longtUrl=longtUrl;
+		this.longUrl=longtUrl;
 	}
 	public String getShortUrl() {
 		return shortUrl;
@@ -32,11 +34,11 @@ public class ShortUrl implements Serializable{
 	public void setShortUrl(String shortUrl) {
 		this.shortUrl = shortUrl;
 	}
-	public String getLongtUrl() {
-		return longtUrl;
+	public String getLongUrl() {
+		return longUrl;
 	}
-	public void setLongtUrl(String longtUrl) {
-		this.longtUrl = longtUrl;
+	public void setLongUrl(String longUrl) {
+		this.longUrl = longUrl;
 	}
 	
 	public static String getShortUrlSha1Implementation(String url) {				
@@ -58,12 +60,11 @@ public class ShortUrl implements Serializable{
 	public boolean equals(Object obj) {
 		if(obj!=null && obj instanceof ShortUrl){			
 			ShortUrl shortUrlComper = (ShortUrl) obj;
-			return shortUrl.equals(shortUrlComper.getShortUrl()) && longtUrl.equals(shortUrlComper.getLongtUrl());
+			return shortUrl.equals(shortUrlComper.getShortUrl()) && longUrl.equals(shortUrlComper.getLongUrl());
 		}
-		else
+		else {
 			return false;
-		
-		
+		}
 	}
 
 }

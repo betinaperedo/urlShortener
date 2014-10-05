@@ -1,101 +1,104 @@
 package coop.tecso.main.servlet;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
+import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import coop.tecso.main.model.ShortUrl;
+import coop.tecso.main.model.shortUrl.ShortUrl;
 import coop.tecso.main.service.ShortUrlService;
 
+
+@RunWith(MockitoJUnitRunner.class)
 public class UrlShortenerServletUTest {
 	
-	HttpServletRequest request;
-	HttpServletResponse response;
-	ShortUrlService shortUrlService;
-	UrlShortenerServlet urlShortenerServlet;
+	@Mock
+	private HttpServletRequest request;
+	@Mock
+	private HttpServletResponse response;
+	@Mock
+	private ShortUrlService shortUrlService;
+	@Mock
+	private UrlShortenerServlet urlShortenerServlet;
+	
 	@Before
 	public void setUp(){
-		request=Mockito.mock(HttpServletRequest.class);
-		response=Mockito.mock(HttpServletResponse.class);
-		shortUrlService=Mockito.mock(ShortUrlService.class);
 		urlShortenerServlet = new UrlShortenerServlet(shortUrlService);
-	}	
-	
-	@After
-	public void dropDataBase(){
-	
 	}
-
+	
+	
 	@Test
-	public void getList() throws IOException, ServletException{
-		
+	public void getList() throws IOException, ServletException {
+
 		StringWriter sw = new StringWriter();
 		PrintWriter pw  =new PrintWriter(sw);
 
+		ImmutableList<ShortUrl> urls = ImmutableList.of(
+				new ShortUrl(ShortUrl.getShortUrlSha1Implementation("www.google.com"),"www.google.com" ),
+				new ShortUrl( ShortUrl.getShortUrlSha1Implementation("www.facebook.com"),"www.facebook.com"));
 
-		Mockito.when(request.getServletPath()).thenReturn("/list");
-		Mockito.when(response.getWriter()).thenReturn(pw);
-						
+		when(request.getServletPath()).thenReturn("/list");
+		when(response.getWriter()).thenReturn(pw);
+		when(shortUrlService.findAll()).thenReturn(urls);
+		
 		urlShortenerServlet.doGet(request, response);
-		
-		Gson gson = new GsonBuilder().create();
-		String urlListJson =gson.toJson(shortUrlService.findAll());		
-		
-		Mockito.verify(request).getServletPath();
-		Mockito.verify(response).getWriter();
-		assertEquals(sw.getBuffer().toString().trim(), urlListJson);
+
+		Gson gson = new GsonBuilder().create();		
+		assertEquals(gson.toJson(urls), sw.getBuffer().toString().trim());
+		verify(response).setContentType("application/json");
+		verify(response).setCharacterEncoding("UTF-8");
 	}
-	
+
 	@Test
 	public void postCreate() throws IOException, ServletException{
-		StringWriter sw = new StringWriter();
-		PrintWriter pw  =new PrintWriter(sw);
-		String urlinput="www.google.com";
 		
-		Mockito.when(request.getParameter("urlinput")).thenReturn(urlinput);
-		Mockito.when(request.getServletPath()).thenReturn("/create");
-		Mockito.when(response.getWriter()).thenReturn(pw);
-		Mockito.when(shortUrlService.createAndSave(urlinput)).thenReturn(ShortUrl.getShortUrlSha1Implementation(urlinput));				
+		StringWriter sw = new StringWriter();
+		PrintWriter pw  = new PrintWriter(sw);
+		String urlinput = "www.google.com";
+		
+		when(request.getParameter("urlinput")).thenReturn(urlinput);
+		when(request.getServletPath()).thenReturn("/create");
+		when(response.getWriter()).thenReturn(pw);
+		when(shortUrlService.createAndSave(urlinput)).thenReturn(ShortUrl.getShortUrlSha1Implementation(urlinput));				
 		
 		urlShortenerServlet.doPost(request, response);
 		
-		Mockito.verify(request).getParameter("urlinput");
-		Mockito.verify(request).getServletPath();
-		Mockito.verify(shortUrlService).createAndSave(urlinput);						
+		verify(request).getParameter("urlinput");
+		verify(request).getServletPath();
+		verify(shortUrlService).createAndSave(urlinput);						
 		assertEquals(sw.getBuffer().toString().trim(), ShortUrl.getShortUrlSha1Implementation(urlinput));						
 	}
 	
 	@Test
 	public void postRemove() throws IOException, ServletException{
-		String urlinput="www.google.com";						
-		shortUrlService.createAndSave(urlinput);
 		
-		Mockito.when(request.getParameter("urlinput")).thenReturn(urlinput);
-		Mockito.when(request.getServletPath()).thenReturn("/remove");
+		String input = ShortUrl.getShortUrlSha1Implementation("www.google.com");								
+		
+		when(request.getParameter("urlinput")).thenReturn(input);
+		when(request.getServletPath()).thenReturn("/remove");
 				
 		urlShortenerServlet.doPost(request, response);
 		
-		Mockito.verify(request).getParameter("urlinput");	
-		Mockito.verify(request).getServletPath();	
+		verify(request).getParameter("urlinput");	
+		verify(request).getServletPath();	
+		verify(shortUrlService).delete(input);
+		
 	}
-	
-	
-	
-
 }

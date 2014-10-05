@@ -7,7 +7,7 @@ import java.util.List;
 import com.google.inject.Inject;
 
 import coop.tecso.main.dao.ShortUrlDAO;
-import coop.tecso.main.model.ShortUrl;
+import coop.tecso.main.model.shortUrl.ShortUrl;
 
 public class ShortUrlServiceImpl implements ShortUrlService{
 
@@ -29,8 +29,8 @@ public class ShortUrlServiceImpl implements ShortUrlService{
 	}
 
 	@Override
-	public void delete(String id) {
-		shortUrlDAO.delete(id);
+	public void delete(String shortUrl) {
+		shortUrlDAO.delete(shortUrl);
 	}
 
 	@Override
