@@ -65,9 +65,6 @@
     	oReq.onload = function(){
     		createComponet(this.responseText) ;	      		    		
     	}
-    	
-    	
-    	
     	oReq.open("post", "/urlshortener/create?urlinput="+encodeURIComponent(url.value), true);
     	oReq.send();
     
