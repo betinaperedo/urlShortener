@@ -11,7 +11,7 @@ import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
-//prueba
+
 public class ShortUrl implements Serializable{
 	
 	public static ShortUrl ofUrl(String longUrl) {
